@@ -30,11 +30,9 @@ class GitSwitchCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $repo = new Repository($_SERVER['PWD']);
-
-        $currentBranch = $repo->getCurrentBranch();
-        $defaultBranch = $repo->getDefaultBranchName();
-        $branches = $repo->getSortedBranchNames();
+        $currentBranch = $this->repo->getCurrentBranch();
+        $defaultBranch = $this->repo->getDefaultBranchName();
+        $branches = $this->repo->getSortedBranchNames();
 
         $index = $input->getArgument(self::ARG_BRANCH_INDEX);
 
@@ -52,17 +50,16 @@ class GitSwitchCommand extends Command
             throw new RuntimeException('You are already on that branch.');
         }
 
-        return $this->switchToGitBranch($repo, $branches[$index]);
+        return $this->switchToGitBranch($branches[$index]);
     }
 
     /**
      * @return int the command exit code (indicating success or failure)
      */
     private function switchToGitBranch(
-        Repository $repository,
         string $branchName,
     ): int {
-        $result = $repository->changeToBranch($branchName);
+        $result = $this->repo->changeToBranch($branchName);
         return $result ? Command::SUCCESS : Command::FAILURE;
     }
 }

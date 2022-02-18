@@ -19,6 +19,11 @@ use function is_string;
 
 trait CommandTrait
 {
+    public function __construct(protected Repository $repo)
+    {
+        parent::__construct();
+    }
+
     /**
      * @param string[] $branches
      */

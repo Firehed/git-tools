@@ -30,12 +30,9 @@ class GitNukeCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        // :(
-        $repo = new Repository($_SERVER['PWD']);
-
-        $currentBranch = $repo->getCurrentBranch();
-        $defaultBranch = $repo->getDefaultBranchName();
-        $branches = $repo->getSortedBranchNames();
+        $currentBranch = $this->repo->getCurrentBranch();
+        $defaultBranch = $this->repo->getDefaultBranchName();
+        $branches = $this->repo->getSortedBranchNames();
 
         $index = $input->getArgument(self::ARG_BRANCH_INDEX);
 
@@ -56,17 +53,16 @@ class GitNukeCommand extends Command
             throw new RuntimeException('Cannot remove the currently selected branch.');
         }
 
-        return $this->removeGitBranch($repo, $branches[$index]);
+        return $this->removeGitBranch($branches[$index]);
     }
 
     /**
      * @return int the command exit code (indicating success or failure)
      */
     private function removeGitBranch(
-        Repository $repository,
         string $branchName,
     ): int {
-        $result = $repository->forceDeleteBranch($branchName);
+        $result = $this->repo->forceDeleteBranch($branchName);
         return $result ? Command::SUCCESS : Command::FAILURE;
     }
 }
