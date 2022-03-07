@@ -61,6 +61,17 @@ class Repository
         return self::trimRefsHeads($branchName);
     }
 
+    /**
+     * @return string[]
+     */
+    public function getChangedFiles(string $comparisonBranch): array
+    {
+        $cmd = sprintf('git diff --name-only %s', escapeshellarg($comparisonBranch));
+        $result = $this->executeCommandInPwd($cmd);
+        assert($result['exitCode'] === 0);
+        return explode("\n", trim($result['stdout']));
+    }
+
     public function changeToBranch(string $name): bool
     {
         $cmd = "git checkout $name";
