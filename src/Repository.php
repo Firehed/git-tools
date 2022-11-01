@@ -131,6 +131,12 @@ class Repository
         return $branches;
     }
 
+    public function pull(): bool
+    {
+        $result = $this->executeCommandInPwd('git pull');
+        return $result['exitCode'] === 0;
+    }
+
     /**
      * @return array{
      *   stdout: string,

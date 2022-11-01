@@ -26,5 +26,6 @@ $repo = new Firehed\GitTools\Repository($_SERVER['PWD']);
 $application = new Application();
 $application->add(new Firehed\GitTools\GitShowChangedFilesCommand($repo));
 $application->add(new Firehed\GitTools\GitSwitchCommand($repo));
+$application->add(new Firehed\GitTools\GitLandedCommand($repo));
 $application->add(new Firehed\GitTools\GitNukeCommand($repo));
 $application->run();
