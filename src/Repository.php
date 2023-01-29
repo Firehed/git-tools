@@ -161,8 +161,14 @@ class Repository
             throw new \Exception('Command could not be run');
         }
 
-        $stdout = stream_get_contents($pipes[1]) ?: '';
-        $stderr = stream_get_contents($pipes[2]) ?: '';
+        $stdout = stream_get_contents($pipes[1]);
+        if ($stdout === false) {
+           $stdout = '';
+        }
+        $stderr = stream_get_contents($pipes[2]);
+        if ($stderr === false) {
+           $stderr = '';
+        }
         $exitCode = proc_close($proc);
         return [
             'stdout' => $stdout,
