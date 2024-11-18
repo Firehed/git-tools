@@ -96,7 +96,7 @@ class Repository
         // Prefer these branch names, in order
         // TODO: make this customizable?
         // TODO: see if there's any way to get this from git itself
-        $candidates = ['main', 'master', 'default', 'dev'];
+        $candidates = ['main', 'master', 'default', 'dev', 'develop'];
         foreach ($candidates as $branch) {
             if (in_array($branch, $branches, true)) {
                 return $branch;
