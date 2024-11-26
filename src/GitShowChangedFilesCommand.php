@@ -24,7 +24,9 @@ class GitShowChangedFilesCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $repo = new Repository($_SERVER['PWD']);
+        $pwd = $_SERVER['PWD'];
+        assert(is_string($pwd));
+        $repo = new Repository($pwd);
 
         // $currentBranch = $repo->getCurrentBranch();
         $defaultBranch = $repo->getDefaultBranchName();
