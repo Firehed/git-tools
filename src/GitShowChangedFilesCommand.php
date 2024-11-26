@@ -16,10 +16,9 @@ class GitShowChangedFilesCommand extends Command
 
     // private const ARG_BRANCH_INDEX = 'index';
 
-    protected static $defaultName = 'git:show-changed-files';
-
     public function configure(): void
     {
+        $this->setName('git:show-changed-files');
         $this->setDescription('Displays files that differ from the given branch');
     }
 

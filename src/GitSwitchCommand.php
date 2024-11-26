@@ -16,10 +16,9 @@ class GitSwitchCommand extends Command
 
     private const ARG_BRANCH_INDEX = 'index';
 
-    protected static $defaultName = 'git:switch';
-
     public function configure(): void
     {
+        $this->setName('git:switch');
         $this->setDescription('Interactively switches to a branch');
         $this->addArgument(
             name: self::ARG_BRANCH_INDEX,

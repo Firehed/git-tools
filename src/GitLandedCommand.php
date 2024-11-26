@@ -13,10 +13,9 @@ class GitLandedCommand extends Command
 {
     use CommandTrait;
 
-    protected static $defaultName = 'git:landed';
-
     public function configure(): void
     {
+        $this->setName('git:landed');
         $this->setDescription('Treats the current branch as landed, by switching back to the default branch, updating it, and removing the original branch.');
     }
 
