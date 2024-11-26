@@ -16,10 +16,9 @@ class GitNukeCommand extends Command
 
     private const ARG_BRANCH_INDEX = 'index';
 
-    protected static $defaultName = 'git:nuke';
-
     public function configure(): void
     {
+        $this->setName('git:nuke');
         $this->setDescription('Interactively force-deletes a branch');
         $this->addArgument(
             name: self::ARG_BRANCH_INDEX,
