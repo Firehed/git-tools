@@ -35,6 +35,26 @@ class Repository
         return array_map(self::trimRefsHeads(...), $branches);
     }
 
+    /**
+     * @return array<string, \DateTimeImmutable>
+     */
+    public function getBranchCommitDates(): array
+    {
+        $cmd = 'git for-each-ref refs/heads --format="%(refname)|%(creatordate)"';
+        $result = $this->executeCommandInPwd($cmd);
+        if ($result['exitCode'] > 0) {
+            throw new \Exception('Git branch date lookup failed');
+        }
+        $rows = explode("\n", trim($result['stdout']));
+        $mapping = [];
+        foreach ($rows as $row) {
+            [$fullRef, $date] = explode('|', $row);
+            $mapping[self::trimRefsHeads($fullRef)] = new \DateTimeImmutable($date);
+        }
+
+        return $mapping;
+    }
+
     private static function trimRefsHeads(string $fullName): string
     {
         return substr($fullName, self::REF_PREFIX_LENGTH);
@@ -114,16 +134,20 @@ class Repository
      *
      * @return string[]
      */
-    public function getSortedBranchNames(): array
+    public function getSortedBranchNames(SortOrder $order): array
     {
         $default = $this->getDefaultBranchName();
         $branches = $this->getBranchNames();
-        usort($branches, function ($lhs, $rhs) use ($default): int {
+        $dates = $order === SortOrder::NewestFirst ? $this->getBranchCommitDates() : [];
+        usort($branches, function ($lhs, $rhs) use ($default, $dates, $order): int {
             if ($lhs === $default) {
                 return -1;
             }
             if ($rhs === $default) {
                 return 1;
+            }
+            if ($order === SortOrder::NewestFirst) {
+                return $dates[$rhs] <=> $dates[$lhs];
             }
             // Default(ish) string sorting
             return mb_strtolower($lhs) <=> mb_strtolower($rhs);
