@@ -31,7 +31,7 @@ class GitNukeCommand extends Command
     {
         $currentBranch = $this->repo->getCurrentBranch();
         $defaultBranch = $this->repo->getDefaultBranchName();
-        $branches = $this->repo->getSortedBranchNames();
+        $branches = $this->repo->getSortedBranchNames(SortOrder::Alphabetical);
 
         $index = $input->getArgument(self::ARG_BRANCH_INDEX);
 

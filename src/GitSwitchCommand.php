@@ -9,40 +9,31 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Attribute\{
+    Argument,
+    AsCommand,
+    Option,
+};
 
+#[AsCommand(name: 'git:switch', description: 'Interactively switches to a branch')]
 class GitSwitchCommand extends Command
 {
     use CommandTrait;
 
-    private const ARG_BRANCH_INDEX = 'index';
+    public function __invoke(
+        InputInterface $input,
+        OutputInterface $output,
+        #[Option(description: 'Sort branches by age instead of name', shortcut: 'N')] bool $newestFirst = false,
+        #[Argument('The numeric index of the branch to switch to')] ?int $index = null,
+    ): int {
+        $sortOrder = $newestFirst ? SortOrder::NewestFirst : SortOrder::Alphabetical;
 
-    public function configure(): void
-    {
-        $this->setName('git:switch');
-        $this->setDescription('Interactively switches to a branch');
-        $this->addArgument(
-            name: self::ARG_BRANCH_INDEX,
-            mode: InputArgument::OPTIONAL,
-            description: 'The numeric index of of the branch to switch to',
-        );
-    }
-
-    public function execute(InputInterface $input, OutputInterface $output): int
-    {
         $currentBranch = $this->repo->getCurrentBranch();
         $defaultBranch = $this->repo->getDefaultBranchName();
-        $branches = $this->repo->getSortedBranchNames();
-
-        $index = $input->getArgument(self::ARG_BRANCH_INDEX);
+        $branches = $this->repo->getSortedBranchNames($sortOrder);
 
         if ($index === null) {
             $index = $this->askForBranchIndex('Switch to which branch?', $branches, $currentBranch, $input, $output);
-        } else {
-            assert(is_string($index));
-            if (!ctype_digit($index)) {
-                throw new RuntimeException('Invalid branch.');
-            }
-            $index = (int) $index;
         }
 
         if ($branches[$index] === $currentBranch) {
