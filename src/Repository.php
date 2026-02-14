@@ -184,8 +184,6 @@ class Repository
         if ($proc === false) {
             throw new \Exception('Command could not be run');
         }
-        assert(is_array($pipes));
-        /** @var array{1: resource, 2: resource} $pipes */
 
         $stdout = stream_get_contents($pipes[1]);
         if ($stdout === false) {
