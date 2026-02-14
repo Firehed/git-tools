@@ -21,10 +21,10 @@ class GitSwitchCommand extends Command
     use CommandTrait;
 
     public function __invoke(
-        #[Argument('The numeric index of the branch to switch to')] ?int $index,
         InputInterface $input,
         OutputInterface $output,
         #[Option(description: 'Sort branches by age instead of name', shortcut: 'N')] bool $newestFirst = false,
+        #[Argument('The numeric index of the branch to switch to')] ?int $index = null,
     ): int {
         $sortOrder = $newestFirst ? SortOrder::NewestFirst : SortOrder::Alphabetical;
 
