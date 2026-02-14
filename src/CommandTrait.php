@@ -34,15 +34,19 @@ trait CommandTrait
         InputInterface $input,
         OutputInterface $output,
     ): int {
+        $branchDates = $this->repo->getBranchCommitDates();
+
         $padding = strlen((string)(count($branches) - 1));
-        $format = "[% {$padding}d] % 1s %s";
+        $format = "[% {$padding}d] % 1s %s (%s)";
 
         foreach ($branches as $index => $branch) {
+            $date = $branchDates[$branch];
             $output->writeln(sprintf(
                 $format,
                 $index,
                 $branch === $currentBranch ? '*' : '',
                 $branch,
+                $this->renderDate($date),
             ));
         }
 
@@ -67,5 +71,22 @@ trait CommandTrait
         $answer = $helper->ask($input, $output, $question);
 
         return $answer;
+    }
+
+    private function renderDate(\DateTimeInterface $date, \DateTimeImmutable $now = new \DateTimeImmutable()): string
+    {
+        $diff = $now->diff($date);
+        $days = $diff->d;
+        if ($diff->m > 0) {
+            $days += ($diff->m * 30);
+        }
+        if ($diff->y > 0) {
+            $days += ($diff->y * 365);
+        }
+        return match ($days) {
+            0 => 'today',
+            1 => 'yesterday',
+            default => "{$days}d",
+        };
     }
 }
